@@ -333,7 +333,8 @@ If COLLECTION is an `obarray', a TEST should be needed. See `obarray'."
                                             (helm-basedir input))
                                            f)))
                  ((functionp collection)
-                  (funcall collection input test t))
+                  (cl-loop for p in (helm-mm-split-pattern input)
+                           append (funcall collection p test t)))
                  ((and alistp (null test)) collection)
                  ;; Next test ensure circular objects are removed
                  ;; with `all-completions' (Issue #1530).
@@ -578,7 +579,7 @@ that use `helm-comp-read' See `helm-M-x' for example."
                             ;; `all-completions' which defeat helm
                             ;; matching functions (multi match, fuzzy
                             ;; etc...) issue #2134.
-                            collection test sort alistp "")))
+                            collection test sort alistp helm-pattern)))
                 (helm-cr-default default cands))))
            (history-get-candidates
             (lambda ()
